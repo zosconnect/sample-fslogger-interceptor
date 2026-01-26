@@ -1,0 +1,12 @@
+
+# Gradle build directories
+.gradle/
+build/
+com.ibm.sample.zosconnect.fslogger.feature/build/
+com.ibm.sample.zosconnect.fslogger.interceptor/build/
+
+# Compiled class files
+*.class
+
+# Logs
+*.log

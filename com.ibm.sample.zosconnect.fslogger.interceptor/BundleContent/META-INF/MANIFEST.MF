@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: com.ibm.sample.zosconnect.fslogger.interceptor
+Bundle-SymbolicName: com.ibm.sample.zosconnect.fslogger.interceptor
+Bundle-Version: 1.0.0.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: com.ibm.zosconnect.spi,
+ org.osgi.framework,
+ org.osgi.service.component
+Service-Component: OSGI-INF/com.ibm.sample.zosconnect.fslogger.provider.xml,
+ OSGI-INF/com.ibm.sample.zosconnect.fslogger.requester.xml
+Export-Package: com.ibm.sample.zosconnect.fslogger.common,
+ com.ibm.sample.zosconnect.fslogger.provider,
+ com.ibm.sample.zosconnect.fslogger.requester
+Bundle-ActivationPolicy: lazy

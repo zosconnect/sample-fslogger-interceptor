@@ -1,0 +1,37 @@
+description = 'Liberty feature (ESA) for the file system logger interceptor'
+
+configurations {
+    bundle {
+        transitive = false
+    }
+}
+
+dependencies {
+    // Include the interceptor bundle in the feature
+    bundle project(path: ':com.ibm.sample.zosconnect.fslogger.interceptor', configuration: 'default')
+}
+
+// Task to create the ESA (Enterprise Subsystem Archive) file
+tasks.register('createEsa', Zip) {
+    archiveBaseName = 'fslogger'
+    archiveVersion = '1.0'
+    archiveExtension = 'esa'
+    destinationDirectory = layout.buildDirectory.dir('distributions')
+    
+    // Include the SUBSYSTEM.MF
+    from('OSGI-INF') {
+        into 'OSGI-INF'
+        include 'SUBSYSTEM.MF'
+    }
+    
+    // Include the interceptor bundle JAR at the root of the ESA
+    from(configurations.bundle)
+}
+
+// Make createEsa part of the build process
+build.dependsOn createEsa
+
+// Ensure the interceptor bundle is built before creating the ESA
+createEsa.dependsOn ':com.ibm.sample.zosconnect.fslogger.interceptor:jar'
+
+

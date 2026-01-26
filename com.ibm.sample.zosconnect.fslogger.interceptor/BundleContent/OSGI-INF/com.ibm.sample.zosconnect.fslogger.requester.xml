@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component xmlns="http://www.osgi.org/xmlns/scr/v1.2.0" activate="activate" configuration-policy="require" deactivate="deactivate" modified="modified" name="fileSystemLoggerRequester" configuration-pid="com.ibm.sample.zosconnect.fslogger.requester">
+  <implementation class="com.ibm.sample.zosconnect.fslogger.requester.FileSystemLoggerRequesterInterceptor"/>
+  <service>
+     <provide interface="com.ibm.zosconnect.spi.Interceptor"/>
+  </service>
+  <property name="service.vendor" type="String" value="IBM"/>
+  <property name="service.product" type="String" value="File System Logger Requester Interceptor"/>
+  <property name="service.ranking" type="String" value="1"/>
+</component>

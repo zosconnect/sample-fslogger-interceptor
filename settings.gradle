@@ -1,0 +1,6 @@
+rootProject.name = 'fslogger-parent'
+
+include 'com.ibm.sample.zosconnect.fslogger.interceptor'
+include 'com.ibm.sample.zosconnect.fslogger.feature'
+
+

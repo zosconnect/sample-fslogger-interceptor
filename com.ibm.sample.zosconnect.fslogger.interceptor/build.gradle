@@ -1,0 +1,119 @@
+plugins {
+    id 'java'
+}
+
+description = 'OSGi bundle containing the file system logger interceptors'
+
+testing {
+    suites {
+        test {
+            useJUnitJupiter('5.9.3')
+        }
+    }
+}
+
+dependencies {
+    // OSGi Core
+    compileOnly "org.osgi:org.osgi.core:${osgiCoreVersion}"
+    
+    // OSGi Service Component
+    compileOnly "org.osgi:org.osgi.service.component:${osgiServiceComponentVersion}"
+    
+    // z/OS Connect SPI - This needs to be provided from your z/OS Connect installation
+    // You may need to install this manually to your local Maven repository
+    // or configure a repository that contains it
+    compileOnly("com.ibm.zosconnect:com.ibm.zosconnect.spi:2.0.0.0") {
+        // Use the actual module coordinates found in the repository
+    }
+    
+    // Test dependencies
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    testImplementation 'org.mockito:mockito-core:5.3.1'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.3.1'
+    
+    // Make compile-only dependencies available for tests
+    testImplementation "org.osgi:org.osgi.core:${osgiCoreVersion}"
+    testImplementation "org.osgi:org.osgi.service.component:${osgiServiceComponentVersion}"
+    testImplementation("com.ibm.zosconnect:com.ibm.zosconnect.spi:2.0.0.0") {
+        // Use the actual module coordinates found in the repository
+    }
+}
+
+// Configure source directory
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+        resources {
+            srcDirs = ['BundleContent']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['test']
+        }
+        resources {
+            srcDirs = ['test-resources']
+        }
+    }
+}
+
+// Configure the JAR task to create an OSGi bundle
+jar {
+    archiveBaseName = 'com.ibm.sample.zosconnect.fslogger.interceptor'
+    archiveVersion = '1.0.0.0'
+    archiveClassifier = ''
+    
+    // Use underscore separator for OSGi bundle naming convention
+    archiveFileName.set(provider { "${archiveBaseName.get()}_${archiveVersion.get()}.jar" })
+    
+    // Set duplicate handling strategy
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    // Include resources from BundleContent
+    from('BundleContent') {
+        into '.'
+    }
+    
+    manifest {
+        attributes(
+            'Bundle-SymbolicName': 'com.ibm.sample.zosconnect.fslogger.interceptor',
+            'Bundle-Name': 'com.ibm.sample.zosconnect.fslogger.interceptor',
+            'Bundle-Version': '1.0.0.0',
+            'Bundle-RequiredExecutionEnvironment': 'JavaSE-1.8',
+            'Bundle-ActivationPolicy': 'lazy',
+            'Import-Package': 'com.ibm.zosconnect.spi,org.osgi.framework,org.osgi.service.component',
+            'Export-Package': 'com.ibm.sample.zosconnect.fslogger.common,com.ibm.sample.zosconnect.fslogger.provider,com.ibm.sample.zosconnect.fslogger.requester',
+            'Service-Component': 'OSGI-INF/com.ibm.sample.zosconnect.fslogger.provider.xml,OSGI-INF/com.ibm.sample.zosconnect.fslogger.requester.xml'
+        )
+    }
+}
+
+// Configure test task
+test {
+    useJUnitPlatform {
+        // Explicitly include JUnit Jupiter engine
+    }
+    
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat = "full"
+        showStandardStreams = false
+    }
+    
+    // Create temporary directory for test logs
+    doFirst {
+        def testLogDir = file("${layout.buildDirectory.get()}/test-logs")
+        testLogDir.mkdirs()
+        systemProperty 'test.log.dir', testLogDir.absolutePath
+    }
+}
+
+// Ensure tests run before building the JAR
+jar.dependsOn test
+
+// Ensure the JAR is built as part of the build task
+build.dependsOn jar
+
+

@@ -94,7 +94,7 @@ public class LogEntryRequester {
     }
 
     /**
-     * Sets the request type (e.g., "CICS", "IMS", "BATCH").
+     * Sets the request type (e.g., "CICS", "IMS", "ZOS").
      */
     public void setRequestType(String requestType) {
         this.requestType = requestType;

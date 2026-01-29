@@ -312,9 +312,16 @@ public class FileSystemLoggerRequesterInterceptor implements EndpointInterceptor
                 logEntry.setRequestId((Long) data.getData(DataRequester.REQUEST_ID));
             }
 
-            // Capture request type
+            // Capture request application type
+            String requestType = null;
             if (data.getData(DataRequester.REQUEST_APPLICATION_TYPE) != null) {
-                logEntry.setRequestType((String) data.getData(DataRequester.REQUEST_APPLICATION_TYPE));
+                try {
+                    Object appTypeObj = data.getData(DataRequester.REQUEST_APPLICATION_TYPE);
+                    requestType = appTypeObj.toString();
+                    logEntry.setRequestType(requestType);
+                } catch (Exception e) {
+                    System.err.println(getName() + " WARNING: Unable to get REQUEST_APPLICATION_TYPE: " + e.getMessage());
+                }
             }
 
             // Capture z/OS information (always)
@@ -331,7 +338,6 @@ public class FileSystemLoggerRequesterInterceptor implements EndpointInterceptor
             }
 
             // Capture CICS information (only if requestType is CICS)
-            String requestType = (String) data.getData(DataRequester.REQUEST_APPLICATION_TYPE);
             if ("CICS".equals(requestType)) {
                 if (data.getData(DataRequester.CICS_APPLID) != null) {
                     logEntry.setCicsApplid((String) data.getData(DataRequester.CICS_APPLID));
